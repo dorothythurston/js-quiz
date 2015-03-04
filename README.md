@@ -1,2 +1,2 @@
-# js-quiz
-Basic quiz app with JS.
+# Quiz App
+Basic quiz app with JS and CSS Styling.
