@@ -43,6 +43,7 @@
 
 .answer {
   background-color: rgba(255,255,255, .8);
+  height: 50px;
   padding: 2px;
   text-align: center;
   border-style: solid;
@@ -132,13 +133,13 @@
 
 #jewel {
   position: absolute;
-  left: 34px;
+  left: 33px;
   top: 6px;
   width: 10px;
   height: 16px;
   background-color: rgb(83,179,203);
   border-radius: 50%;
-  border: 1px solid rgb(160,40,149);
+  border: 2px solid rgb(160,40,149);
   z-index: 1;
 }
 
