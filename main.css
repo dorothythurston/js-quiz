@@ -14,12 +14,12 @@
 
 #jumbotron {
   font-family: 'Dancing Script', cursive;
-  position: relative;
   padding: 20px 20px 20px 20px;
   text-align: center;
   background-color: rgba(255,255,255, .5);
   width: 300px;
-  margin-top: 40px;
+  margin-top: 20px;
+  margin-bottom: 10px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -31,13 +31,13 @@
   text-align: center;
   background-color: rgba(255,255,255, .5);
   width: 300px;
+  display:none;
 }
+
 
 .question {
   background-color: rgba(255,255,255, .5);
   width: 200px;
-  margin-left: 400px;
-  border-radius: 20px;
   padding: 10px;
 }
 
@@ -55,17 +55,18 @@
 #status {
   background-color: rgba(255,255,255, .5);
   color: rgb(40,160,149);
-  width: 300px;
+  width: 100px;
   margin-left: auto;
   margin-right: auto;
   margin-top: 10px;
-  padding: 10px;
+  padding: 5px;
   text-align: center;
   border-radius: 50%;
+  display: none;
 }
 
 .selected {
-  background-color: rgba(255,255,255, .9);
+  background-color: rgba(250,210,230, .8);
 }
 
 /* --------------------------
@@ -73,10 +74,11 @@
 --------------------------- */
 
 #crown {
+  opacity: 0.6;
   position: relative;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 10px;
+  margin-top: 20px;
   width: 80px;
   height: 20px;
 }
@@ -130,12 +132,73 @@
 
 #jewel {
   position: absolute;
-  left: 33px;
+  left: 34px;
   top: 6px;
-  width: 12px;
-  height: 18px;
+  width: 10px;
+  height: 16px;
   background-color: rgb(83,179,203);
   border-radius: 50%;
   border: 1px solid rgb(160,40,149);
   z-index: 1;
 }
+
+/* --------------------------
+   KEY
+--------------------------- */
+.key-container {
+  margin-left: auto;
+  margin-right: auto;
+  height: 100px;
+  padding: 20px 20px 20px 20px;
+  text-align: center;
+  background-color: rgba(255,255,255, .5);
+  border-radius: 50%;
+  width: 200px;
+}
+
+#key {
+  opacity: 1;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 20px;
+  width: 80px;
+  height: 20px;
+}
+
+#key-circle {
+  position: absolute;
+  left: -25px;
+  border: 7px solid rgb(227,169,104);
+  border-radius: 50%;
+  height: 35px;
+  width:30px;
+}
+
+#key-shaft {
+  position: absolute;
+  top: 20px;
+  left: 17px;
+  height: 10px;
+  width: 85px;
+  background-color: rgb(227,169,104);
+  border-radius: 0 5px 5px 0;
+}
+
+#key-lock-1 {
+  position: absolute;
+  left: 75px;
+  top: 30px;
+  height: 5px;
+  width: 20px;
+  background-color: rgb(227,169,104);
+}
+
+#key-lock-2 {
+  position: absolute;
+  left: 80px;
+  top: 35px;
+  height: 5px;
+  width: 10px;
+  background-color: rgb(227,169,104);
+  }
