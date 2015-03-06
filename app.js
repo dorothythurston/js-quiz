@@ -1,14 +1,79 @@
 $(document).ready(function() {
-var questionOne = {question:"Who wore glass slippers?", answer:"Cinderella", choices:["Cinderella","Belle","Pochahontas"]},
-    questionTwo = {question:"Who lived in the Ocean?", answer:"Ariel", choices:["Ariel","Merida","Mulan"]},
-    questionThree = {question:"Who was from New Orleans?", answer:"Tiana", choices:["Tiana","Elsa","Rapunzel"]},
-    questionFour = {question:"Who had a pet tiger?", answer:"Jasmine", choices:["Jasmine","Snow White","Aurora"]},
-    questionFive = {question:"Who lived in France?", answer:"Belle", choices:["Rapunzel","Cinderella","Belle"]},
-    questions = [questionOne, questionTwo, questionThree, questionFour, questionFive];
-    $('#total').text(questions.length);
 
-var i = 0;
+var princesses = ["Snow White", "Aurora", "Cinderella","Mulan","Merida","Tiana","Pochahontas","Belle","Jasmine","Ariel","Rapunzel"];
+var deck = [];
 var score = 0;
+var i = 0;
+var questions = [["Who wore glass slippers?", "Cinderella"],
+            ["Who lived in the Ocean?","Ariel"],
+            ["Who was from New Orleans?", "Tiana"],
+            ["Who had a pet Tiger?", "Jasmine"],
+            ["Who knew seven dwarves?","Snow White"]
+            ["Who had three little brothers?","Merida"],
+            ["Who had a father that was an inventor?","Belle"],
+            ["Who fought the Hun army?","Mulan"],
+            ["Who had a chameleon?","Rapunzel"],
+            ["Who was called Sleeping Beauty?", "Aurora"],
+            ["Who loved John Smith?","Pochahontas"]];
+$('#total').text(deck.length);
+
+var buildChoices = function(correctAnswer) {
+  choices = []
+  answers = princesses.slice();
+  for (var i = 0; i < answers.length; i++) {
+    if (answers[i] === correctAnswer) {
+      choices.push(answers[i]);
+      answers.splice(i,1);
+    }
+  }
+  while (choices.length < 3) {
+    var ranNum = Math.floor((Math.random() * 3) + 1);
+    if (ranNum === 1) {
+      choices.push(answers.pop());
+      answers.pop();
+    }
+    else if (ranNum === 2) {
+      choices.push(answers.shift());
+      answers.shift();
+    }
+    else {
+      choices.push(answers[4]);
+      answers.splice(4,1);
+    }
+  }
+  console.log(answers);
+  console.log(choices);
+  return choices;
+}
+
+var addQuestion = function(questionPrompt,answer) {
+  var choices = buildChoices(answer);
+  deck.push({
+    questionPrompt: questionPrompt,
+    answer: answer,
+    choices: choices
+  });
+};
+
+var buildDeck = function() {
+  var deckLimit = 5;
+  for (var i = 0; i < deckLimit; i++){
+    console.log(questions[i][1]);
+    console.log(questions[i[1]]);
+    addQuestion(questions[i[0]],questions[i[1]]);
+  }
+};
+
+var fillChoices = function() {
+  $('p', '#prompt').text(deck[i].questionPrompt);
+  $('#choice-one').text(deck[i].choices[0]);
+  $('#choice-two').text(deck[i].choices[1]);
+  $('#choice-three').text(deck[i].choices[2]);
+}
+
+var ranNum = function(max) {
+  return Math.floor((Math.random() * max) + 0);
+}
 
 var displayResults = function() {
   $('.answer').fadeOut( 1000 );
@@ -23,31 +88,15 @@ var displayResults = function() {
 };
 
 var checkAnswer = function(guess) {
-  if (guess.text().trim() === questions[i].answer) {
+  if (guess.text().trim() === deck[i].answer) {
     score++;
   }
 };
 
-var ranChoice = function() {
-  var ranNum = Math.floor((Math.random() * 2) + 1);
-  if (ranNum === 1) {
-    return (questions[i].choices).pop();
-  }
-  else {
-    return (questions[i].choices).shift();
-  }
-};
-
-var fillChoices = function() {
-  $('p', '#prompt').text(questions[i].question);
-  $('#choice-one').text(ranChoice());
-  $('#choice-two').text(ranChoice());
-  $('#choice-three').text(ranChoice());
-}
 
   $('.answer').click(function() {
     checkAnswer($(this));
-    if (i === questions.length-1) {
+    if (i === deck.length-1) {
       displayResults();
     }
     else {
@@ -58,6 +107,8 @@ var fillChoices = function() {
   });
 
   $('.key-container').click(function() {
+    buildDeck();
+    console.log(deck);
     $(this).fadeOut( 500 );
     fillChoices();
     $('#quiz-container').slideDown( 1200 );
