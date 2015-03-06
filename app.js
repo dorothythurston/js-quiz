@@ -1,17 +1,17 @@
 $(document).ready(function() {
-
-var questionOne = {question:"Who wore glass slippers?", answer:"Cinderella", wrongOne: "Belle", wrongTwo: "Pochahontas"},
-    questionTwo = {question:"Who lived in the Ocean?", answer:"Ariel", wrongOne:"Merida", wrongTwo:"Mulan"},
-    questionThree = {question:"Who was from New Orleans?", answer:"Tiana", wrongOne:"Elsa", wrongTwo:"Rapunzel"},
-    questionFour = {question:"Who had a pet tiger?", answer:"Jasmine", wrongOne:"Snow White", wrongTwo:"Aurora"},
-    questions = [questionOne, questionTwo, questionThree, questionFour];
+var questionOne = {question:"Who wore glass slippers?", answer:"Cinderella", choices:["Cinderella","Belle","Pochahontas"]},
+    questionTwo = {question:"Who lived in the Ocean?", answer:"Ariel", choices:["Ariel","Merida","Mulan"]},
+    questionThree = {question:"Who was from New Orleans?", answer:"Tiana", choices:["Tiana","Elsa","Rapunzel"]},
+    questionFour = {question:"Who had a pet tiger?", answer:"Jasmine", choices:["Jasmine","Snow White","Aurora"]},
+    questionFive = {question:"Who lived in France?", answer:"Belle", choices:["Rapunzel","Cinderella","Belle"]},
+    questions = [questionOne, questionTwo, questionThree, questionFour, questionFive];
     $('#total').text(questions.length);
 
 var i = 0;
 var score = 0;
 
-var results = function() {
-  if (score >= 2 ) {
+var displayResults = function() {
+  if (score >= 3 ) {
     $('p','#results').text("You got " + score + " correct. You rock.");
   }
   else {
@@ -19,42 +19,47 @@ var results = function() {
   }
 };
 
-var checkAnswer = function() {
-
+var checkAnswer = function(guess) {
+  if (guess.text().trim() === questions[i].answer) {
+    score++;
+  }
 };
 
+var ranChoice = function() {
+  var ranNum = Math.floor((Math.random() * 2) + 1);
+  if (ranNum === 1) {
+    return (questions[i].choices).pop();
+  }
+  else {
+    return (questions[i].choices).shift();
+  }
+};
+
+var fillChoices = function() {
+  $('p', '#prompt').text(questions[i].question);
+  $('#choice-one').text(ranChoice());
+  $('#choice-two').text(ranChoice());
+  $('#choice-three').text(ranChoice());
+}
 
   $('.answer').click(function() {
-    $(this).toggleClass('selected');
+    checkAnswer($(this));
     if (i === questions.length-1) {
       $('.answer').fadeOut( 300 );
       $('#prompt').fadeOut( 300 );
       $('#results').fadeIn( 1200 );
-      if ($(this).text().trim() === questions[i].answer) {
-        score++;
-      }
-      results();
+      displayResults();
     }
     else {
       i++;
-      $('p', '#prompt').text((questions[i]).question);
-      $('#choice-one').text((questions[i]).answer);
-      $('#choice-two').text((questions[i]).wrongOne);
-      $('#choice-three').text((questions[i]).wrongTwo);
-      $(this).toggleClass('selected');
+      fillChoices();
       $('#index').text(i+1);
-      if ($(this).text().trim() === questions[i].answer) {
-        score++;
-      }
     }
   });
 
   $('.key-container').click(function() {
     $(this).fadeOut( 500 );
-    $('p', '#prompt').text(questionOne.question);
-    $('#choice-one').html(questionOne.answer);
-    $('#choice-two').html(questionOne.wrongOne);
-    $('#choice-three').html(questionOne.wrongTwo);
+    fillChoices();
     $('#quiz').slideDown( 1200 );
     $('#status').slideDown( 1200 );
     $('#index').text(i+1);
