@@ -11,6 +11,9 @@ var i = 0;
 var score = 0;
 
 var displayResults = function() {
+  $('.answer').fadeOut( 1000 );
+  $('#game').replaceWith($('#results').toggle()).fadeIn('slow');
+  $('#status').fadeOut( 1000 );
   if (score >= 3 ) {
     $('p','#results').text("You got " + score + " correct. You rock.");
   }
@@ -45,9 +48,6 @@ var fillChoices = function() {
   $('.answer').click(function() {
     checkAnswer($(this));
     if (i === questions.length-1) {
-      $('.answer').fadeOut( 300 );
-      $('#prompt').fadeOut( 300 );
-      $('#results').fadeIn( 1200 );
       displayResults();
     }
     else {
@@ -60,7 +60,7 @@ var fillChoices = function() {
   $('.key-container').click(function() {
     $(this).fadeOut( 500 );
     fillChoices();
-    $('#quiz').slideDown( 1200 );
+    $('#quiz-container').slideDown( 1200 );
     $('#status').slideDown( 1200 );
     $('#index').text(i+1);
   });
