@@ -12,10 +12,10 @@ var score = 0;
 
 var results = function() {
   if (score >= 2 ) {
-    $('#results').text("You got " + score + " correct. You rock.");
+    $('p','#results').text("You got " + score + " correct. You rock.");
   }
   else {
-    $('#results').text("You got " + score + " correct. Maybe not so much.");
+    $('p','#results').text("You got " + score + " correct. Maybe not so much.");
   }
 };
 
@@ -27,10 +27,8 @@ var checkAnswer = function() {
   $('.answer').click(function() {
     $(this).toggleClass('selected');
     if (i === questions.length-1) {
-      $('.answer').slideUp( 400 );
-      $('#prompt').fadeOut( 800 );
-      $('#status').fadeOut( 800 );
-      $('.key-container').fadeIn( 1200 );
+      $('.answer').fadeOut( 300 );
+      $('#prompt').fadeOut( 300 );
       $('#results').fadeIn( 1200 );
       if ($(this).text().trim() === questions[i].answer) {
         score++;
