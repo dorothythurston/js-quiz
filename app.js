@@ -8,7 +8,7 @@ var questions = [["Who wore glass slippers?", "Cinderella"],
             ["Who lived in the Ocean?","Ariel"],
             ["Who was from New Orleans?", "Tiana"],
             ["Who had a pet Tiger?", "Jasmine"],
-            ["Who knew seven dwarves?","Snow White"]
+            ["Who knew seven dwarves?","Snow White"],
             ["Who had three little brothers?","Merida"],
             ["Who had a father that was an inventor?","Belle"],
             ["Who fought the Hun army?","Mulan"],
@@ -26,23 +26,17 @@ var buildChoices = function(correctAnswer) {
       answers.splice(i,1);
     }
   }
+
   while (choices.length < 3) {
-    var ranNum = Math.floor((Math.random() * 3) + 1);
-    if (ranNum === 1) {
-      choices.push(answers.pop());
-      answers.pop();
-    }
-    else if (ranNum === 2) {
-      choices.push(answers.shift());
-      answers.shift();
+    var ranNum = Math.floor((Math.random() * answers.length-1) + 1);
+    if (ranNum % 2 === 0) {
+      choices.push(answers[ranNum]);
     }
     else {
-      choices.push(answers[4]);
-      answers.splice(4,1);
+      choices.unshift(answers[ranNum]);
     }
+    answers.splice(ranNum,1);
   }
-  console.log(answers);
-  console.log(choices);
   return choices;
 }
 
@@ -58,9 +52,10 @@ var addQuestion = function(questionPrompt,answer) {
 var buildDeck = function() {
   var deckLimit = 5;
   for (var i = 0; i < deckLimit; i++){
+    console.log(questions);
     console.log(questions[i][1]);
-    console.log(questions[i[1]]);
-    addQuestion(questions[i[0]],questions[i[1]]);
+    console.log(questions[i][0]);
+    addQuestion(questions[i][0],questions[i][1]);
   }
 };
 
