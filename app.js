@@ -1,10 +1,10 @@
 $(document).ready(function() {
-
-var princesses = ["Snow White", "Aurora", "Cinderella","Mulan","Merida","Tiana","Pochahontas","Belle","Jasmine","Ariel","Rapunzel"];
 var deck = [];
 var score = 0;
 var i = 0;
-var questions = [["Who wore glass slippers?", "Cinderella"],
+var deckLimit = 5;
+var choicesLimit = 3;
+var data = [["Who wore glass slippers?", "Cinderella"],
             ["Who lived in the Ocean?","Ariel"],
             ["Who was from New Orleans?", "Tiana"],
             ["Who had a pet Tiger?", "Jasmine"],
@@ -15,46 +15,60 @@ var questions = [["Who wore glass slippers?", "Cinderella"],
             ["Who had a chameleon?","Rapunzel"],
             ["Who was called Sleeping Beauty?", "Aurora"],
             ["Who loved John Smith?","Pochahontas"]];
-$('#total').text(deck.length);
 
-var buildChoices = function(correctAnswer) {
-  choices = []
-  answers = princesses.slice();
-  for (var i = 0; i < answers.length; i++) {
-    if (answers[i] === correctAnswer) {
-      choices.push(answers[i]);
-      answers.splice(i,1);
-    }
-  }
 
-  while (choices.length < 3) {
-    var ranNum = Math.floor((Math.random() * answers.length-1) + 1);
-    if (ranNum % 2 === 0) {
-      choices.push(answers[ranNum]);
-    }
-    else {
-      choices.unshift(answers[ranNum]);
-    }
-    answers.splice(ranNum,1);
-  }
-  return choices;
+var ranNum = function(min,max) {
+  return Math.floor((Math.random() * max) + min);
 }
 
+var buildQuestions = function() {
+  var questions = [];
+  while (questions.length < deckLimit) {
+    var index = ranNum(0, data.length-1);
+    if (questions.indexOf(data[index]) === -1) {
+    questions.push(data[index]);
+    }
+  }
+  return questions
+}
+
+var buildChoices = function(correctAnswer) {
+  var choices = [];
+  choices.push(correctAnswer);
+  while (choices.length < choicesLimit) {
+    var index = ranNum(0, data.length-1);
+    if ((choices.indexOf(data[index][1]) === -1)) {
+      if (index % 2 === 0) {
+        choices.push(data[index][1]);
+      }
+      else {
+        choices.unshift(data[index][1]);
+      }
+    }
+  }
+  return choices;
+};
+
 var addQuestion = function(questionPrompt,answer) {
-  var choices = buildChoices(answer);
   deck.push({
     questionPrompt: questionPrompt,
     answer: answer,
-    choices: choices
+    choices: buildChoices(answer)
   });
 };
 
+var clearDeck = function() {
+    while(deck.length > 0) {
+          deck.pop();
+    }
+    console.log(deck);
+};
+
 var buildDeck = function() {
-  var deckLimit = 5;
+  var questions = buildQuestions();
+  console.log(questions);
+  clearDeck();
   for (var i = 0; i < deckLimit; i++){
-    console.log(questions);
-    console.log(questions[i][1]);
-    console.log(questions[i][0]);
     addQuestion(questions[i][0],questions[i][1]);
   }
 };
@@ -64,21 +78,20 @@ var fillChoices = function() {
   $('#choice-one').text(deck[i].choices[0]);
   $('#choice-two').text(deck[i].choices[1]);
   $('#choice-three').text(deck[i].choices[2]);
-}
+};
 
-var ranNum = function(max) {
-  return Math.floor((Math.random() * max) + 0);
-}
 
-var displayResults = function() {
-  $('.answer').fadeOut( 1000 );
-  $('#game').replaceWith($('#results').toggle()).fadeIn('slow');
-  $('#status').fadeOut( 1000 );
-  if (score >= 3 ) {
-    $('p','#results').text("You got " + score + " correct. You rock.");
+var displayGame = function() {
+  $('#total').text(deckLimit);
+  $('#quiz-container').slideDown( 1200 );
+  $('#status').slideDown( 1200 );
+  $('#index').text(i+1);
+  if ($('#results').is(':hidden')) {
+    $('#new-game').fadeOut( 500 );
   }
   else {
-    $('p','#results').text("You got " + score + " correct. Maybe not so much.");
+    $('#results').fadeToggle("fast", "linear", $('#game').toggle());
+    $('#new-game').fadeToggle("fast", "linear", $('#status').toggle());
   }
 };
 
@@ -88,8 +101,28 @@ var checkAnswer = function(guess) {
   }
 };
 
+var displayResults = function() {
+  $('#game').fadeToggle("fast", "linear", $('#results').toggle());
+  $('#status').fadeToggle("fast", "linear", $('#new-game').toggle());
+  if (score >= 3 ) {
+    $('p','#results').text("You got " + score + " correct. You rock.");
+  }
+  else {
+    $('p','#results').text("You got " + score + " correct. Maybe not so much.");
+  }
+};
 
-  $('.answer').click(function() {
+
+var playGame = function() {
+  i = 0;
+  score = 0;
+  buildDeck();
+  fillChoices();
+  displayGame();
+
+
+  $('.answer').unbind('click').click(function() {
+    console.log(i);
     checkAnswer($(this));
     if (i === deck.length-1) {
       displayResults();
@@ -100,14 +133,9 @@ var checkAnswer = function(guess) {
       $('#index').text(i+1);
     }
   });
+};
 
-  $('.key-container').click(function() {
-    buildDeck();
-    console.log(deck);
-    $(this).fadeOut( 500 );
-    fillChoices();
-    $('#quiz-container').slideDown( 1200 );
-    $('#status').slideDown( 1200 );
-    $('#index').text(i+1);
+  $('#new-game').unbind('click').click(function() {
+    playGame();
   });
 });
