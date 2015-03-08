@@ -82,17 +82,17 @@ var fillChoices = function() {
 
 
 var displayGame = function() {
-  $('#total').text(deckLimit);
-  $('#quiz-container').slideDown( 1200 );
-  $('#status').slideDown( 1200 );
-  $('#index').text(i+1);
   if ($('#results').is(':hidden')) {
     $('#new-game').fadeOut( 500 );
+    $('#status').slideDown( 1200 );
+    $('#quiz-container').slideDown( 1200 );
   }
   else {
-    $('#results').fadeToggle("fast", "linear", $('#game').toggle());
-    $('#new-game').fadeToggle("fast", "linear", $('#status').toggle());
+    $('#results').fadeToggle("fast", "linear", $('#game').fadeIn( 500 ));
+    $('#new-game').fadeToggle("fast", "linear", $('#status').fadeIn( 500 ));
   }
+  $('#total').text(deckLimit);
+  $('#index').text(i+1);
 };
 
 var checkAnswer = function(guess) {
@@ -102,7 +102,7 @@ var checkAnswer = function(guess) {
 };
 
 var displayResults = function() {
-  $('#game').fadeToggle("fast", "linear", $('#results').toggle());
+  $('#game').fadeToggle("fast", "linear", $('#results').show());
   $('#status').fadeToggle("fast", "linear", $('#new-game').toggle());
   if (score >= 3 ) {
     $('p','#results').text("You got " + score + " correct. You rock.");
@@ -122,7 +122,6 @@ var playGame = function() {
 
 
   $('.answer').unbind('click').click(function() {
-    console.log(i);
     checkAnswer($(this));
     if (i === deck.length-1) {
       displayResults();
