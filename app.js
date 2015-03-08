@@ -1,10 +1,14 @@
 $(document).ready(function() {
+  $('#display').slideDown('slow');
+
 var deck = [];
 var score = 0;
 var i = 0;
 var deckLimit = 5;
 var choicesLimit = 3;
-var data = [["Who wore glass slippers?", "Cinderella"],
+var Princesses = {backgroundImage: "linear-gradient(190deg, magenta, pink 300px)",
+            data:
+            [["Who wore glass slippers?", "Cinderella"],
             ["Who lived in the Ocean?","Ariel"],
             ["Who was from New Orleans?", "Tiana"],
             ["Who had a pet Tiger?", "Jasmine"],
@@ -14,8 +18,39 @@ var data = [["Who wore glass slippers?", "Cinderella"],
             ["Who fought the Hun army?","Mulan"],
             ["Who had a chameleon?","Rapunzel"],
             ["Who was called Sleeping Beauty?", "Aurora"],
-            ["Who loved John Smith?","Pochahontas"]];
+            ["Who loved John Smith?","Pochahontas"]]
+};
 
+var Villains = {backgroundImage: "linear-gradient(190deg, purple, mediumpurple 300px)",
+             data:
+             [["Who had a hook for a hand?", "Captain Hook"],
+             ["Who wanted to marry Belle?","Gaston"],
+             ["Who is a Lion?","Scar"],
+             ["Who lives in the ocean?","Ursula"],
+             ["Who has a dog named Percy?","Governor Ratcliff"],
+             ["Who is from London?","Cruella de Vil"],
+             ["Who had a parrot named Iago?","Jafar"],
+             ["Who cast a spell on Sleeping Beauty?","Maleficent"],
+             ["Who is a greek god?","Hades"],
+             ["Who is known as the shadow man?","Doctor Facilier"],
+             ["Who lives in Wonderland?","The Queen of Hearts"]]
+};
+
+var Princes = {backgroundImage: "linear-gradient(190deg, blue, powderblue 300px)",
+              data:
+              [["Who is also known as The Beast?","Adam"],
+              ["Who heard Snow White singing?", "Florian"],
+              ["Who danced with Cinderella?","Henry"],
+              ["Who kissed Sleeping Beauty?","Phillip"],
+              ["Who was saved by Ariel?","Eric"],
+              ["Who was called a street rat?","Aladdin"],
+              ["Who sailed to the New World?","John Smith"],
+              ["Who fought the Hun army?","Li Shang"],
+              ["Who was from Maldonia?","Naveen"],
+              ["Whose real name is Eugene?","Flynn Rider"],
+              ["Who is from Africa?","Simba"]]
+
+};
 
 var ranNum = function(min,max) {
   return Math.floor((Math.random() * max) + min);
@@ -85,7 +120,8 @@ var displayGame = function() {
   if ($('#results').is(':hidden')) {
     $('#new-game').fadeOut( 500 );
     $('#status').slideDown( 1200 );
-    $('#quiz-container').slideDown( 1200 );
+    $('#game').slideDown( 1200 );
+    $('#title').text("Princesses");
   }
   else {
     $('#results').fadeToggle("fast", "linear", $('#game').fadeIn( 500 ));
