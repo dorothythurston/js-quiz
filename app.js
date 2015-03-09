@@ -6,8 +6,8 @@ var score = 0;
 var i = 0;
 var deckLimit = 5;
 var choicesLimit = 3;
-var Princesses = {backgroundColor: "plum",
-            data:
+var princesses = {name:"Princesses", decoration:"#princess-hat", backgroundColor: "plum",
+            questions:
             [["Who wore glass slippers?", "Cinderella"],
             ["Who lived in the Ocean?","Ariel"],
             ["Who was from New Orleans?", "Tiana"],
@@ -21,8 +21,8 @@ var Princesses = {backgroundColor: "plum",
             ["Who loved John Smith?","Pochahontas"]]
 };
 
-var Villains = {backgroundColor: "mediumpurple",
-             data:
+var villains = {name: "Villains", decoration:"#evil-crown", backgroundColor: "mediumpurple",
+             questions:
              [["Who had a hook for a hand?", "Captain Hook"],
              ["Who wanted to marry Belle?","Gaston"],
              ["Who is a Lion?","Scar"],
@@ -36,8 +36,8 @@ var Villains = {backgroundColor: "mediumpurple",
              ["Who lives in Wonderland?","The Queen of Hearts"]]
 };
 
-var Princes = {backgroundColor: "powderblue",
-              data:
+var princes = {name: "Princes", decoration:"#prince-crown", backgroundColor: "powderblue",
+              questions:
               [["Who is also known as The Beast?","Adam"],
               ["Who heard Snow White singing?", "Florian"],
               ["Who danced with Cinderella?","Henry"],
@@ -51,46 +51,49 @@ var Princes = {backgroundColor: "powderblue",
               ["Who is from Africa?","Simba"]]
 
 };
+var games = [princesses, villains, princes];
 
 var ranNum = function(min,max) {
   return Math.floor((Math.random() * max) + min);
 }
 
-var buildQuestions = function() {
-  var questions = [];
-  while (questions.length < deckLimit) {
-    var index = ranNum(0, data.length-1);
-    if (questions.indexOf(data[index]) === -1) {
-    questions.push(data[index]);
-    }
-  }
-  return questions
-}
 
-var buildChoices = function(correctAnswer) {
+
+var buildChoices = function(correctAnswer, gameChoice) {
   var choices = [];
   choices.push(correctAnswer);
   while (choices.length < choicesLimit) {
-    var index = ranNum(0, data.length-1);
-    if ((choices.indexOf(data[index][1]) === -1)) {
+    var index = ranNum(0, gameChoice.questions.length-1);
+    if ((choices.indexOf(gameChoice.questions[index][1]) === -1)) {
       if (index % 2 === 0) {
-        choices.push(data[index][1]);
+        choices.push(gameChoice.questions[index][1]);
       }
       else {
-        choices.unshift(data[index][1]);
+        choices.unshift(gameChoice.questions[index][1]);
       }
     }
   }
   return choices;
 };
 
-var addQuestion = function(questionPrompt,answer) {
+var addQuestion = function(questionPrompt,answer, gameChoice) {
   deck.push({
     questionPrompt: questionPrompt,
     answer: answer,
-    choices: buildChoices(answer)
+    choices: buildChoices(answer, gameChoice)
   });
 };
+
+var buildQuestions = function(gameChoice) {
+  var questions = [];
+  while (questions.length < deckLimit) {
+    var index = ranNum(0, gameChoice.questions.length-1);
+    if (questions.indexOf(gameChoice.questions[index][0]) === -1) {
+    questions.push(gameChoice.questions[index][0]);
+    }
+  }
+  return questions
+}
 
 var clearDeck = function() {
     while(deck.length > 0) {
@@ -99,12 +102,11 @@ var clearDeck = function() {
     console.log(deck);
 };
 
-var buildDeck = function() {
-  var questions = buildQuestions();
-  console.log(questions);
+var buildDeck = function(gameChoice) {
+  var questions = buildQuestions(gameChoice);
   clearDeck();
   for (var i = 0; i < deckLimit; i++){
-    addQuestion(questions[i][0],questions[i][1]);
+    addQuestion(gameChoice.questions[i][0], gameChoice.questions[i][1], gameChoice);
   }
 };
 
@@ -113,22 +115,6 @@ var fillChoices = function() {
   $('#choice-one').text(deck[i].choices[0]);
   $('#choice-two').text(deck[i].choices[1]);
   $('#choice-three').text(deck[i].choices[2]);
-};
-
-
-var displayGame = function() {
-  if ($('#results').is(':hidden')) {
-    $('#new-game').fadeOut( 500 );
-    $('#status').slideDown( 1200 );
-    $('#game').slideDown( 1200 );
-    $('#title').text("Princesses");
-  }
-  else {
-    $('#results').fadeToggle("fast", "linear", $('#game').fadeIn( 500 ));
-    $('#new-game').fadeToggle("fast", "linear", $('#status').fadeIn( 500 ));
-  }
-  $('#total').text(deckLimit);
-  $('#index').text(i+1);
 };
 
 var checkAnswer = function(guess) {
@@ -148,14 +134,38 @@ var displayResults = function() {
   }
 };
 
+var displayGame = function(gameChoice) {
+  $('.game-option').slideUp( 200 );
+  $('.main-container').css("background-color", gameChoice.backgroundColor);
+  $(gameChoice.decoration).slideDown(200);
+  $('#status').slideDown( 200 );
+  $('#game').slideDown( 200 );
+  $('#title').text(" " + gameChoice.name);
+  $('#total').text(deckLimit);
+  $('#index').text(i+1);
+};
 
-var playGame = function() {
+
+var playGame = function(gameChoice) {
   i = 0;
   score = 0;
-  buildDeck();
-  fillChoices();
-  displayGame();
+  displayGame(gameChoice);
+  buildDeck(gameChoice);
+  fillChoices(gameChoice);
+  console.log(deck);
+};
 
+var selectGame = function(gameChoice) {
+  var choice = $('h2', gameChoice).text();
+  for (var i = 0; i< games.length; i++) {
+    if (choice === games[i].name) {
+      playGame(games[i]);
+    }
+    else {
+      console.log('hoo');
+    }
+  }
+};
 
   $('.answer').unbind('click').click(function() {
     checkAnswer($(this));
@@ -168,21 +178,8 @@ var playGame = function() {
       $('#index').text(i+1);
     }
   });
-};
 
-  $('#new-game').unbind('click').click(function() {
-    playGame();
-  });
-
-  $('h2').click(function() {
-    /*$('#evil-crown').slideDown(200);
-    $('.main-container').css("background-color","blueviolet");
-    $('#title').text(" Villains");
-    $('#princess-hat').slideDown(200);
-    $('.main-container').css("background-color","plum");
-    $('#title').text(" Princesses");*/
-    $('#prince-crown').slideDown(200);
-    $('.main-container').css("background-color","powderblue");
-    $('#title').text(" Princes");
+  $('.game-option').click(function() {
+    selectGame($(this));
   });
 });

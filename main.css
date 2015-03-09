@@ -54,16 +54,11 @@ h2 {
 }
 
 .answer {
-  background-color: rgba(255,255,255, .8);
-  height: 50px;
-  padding: 2px;
-  text-align: center;
-  border: 6px;
-  border-style: solid;
-  border-top-color: rgba(240,240,240, .5);
-  border-right-color: rgba(190,190,190,.5);
-  border-bottom-color: rgba(160,160,160,.5);
-  border-left-color: rgba(175,175,175, .5);
+  font-family: 'Dancing Script', cursive;
+  border: 3px solid #696969;
+  height: 75px;
+  margin: 5px;
+  background-color: rgba(255,255,255, .6);
 }
 
 .answer:hover, .game-option:hover {
