@@ -6,7 +6,7 @@ var score = 0;
 var i = 0;
 var deckLimit = 5;
 var choicesLimit = 3;
-var Princesses = {backgroundImage: "linear-gradient(190deg, magenta, pink 300px)",
+var Princesses = {backgroundColor: "plum",
             data:
             [["Who wore glass slippers?", "Cinderella"],
             ["Who lived in the Ocean?","Ariel"],
@@ -21,7 +21,7 @@ var Princesses = {backgroundImage: "linear-gradient(190deg, magenta, pink 300px)
             ["Who loved John Smith?","Pochahontas"]]
 };
 
-var Villains = {backgroundImage: "linear-gradient(190deg, purple, mediumpurple 300px)",
+var Villains = {backgroundColor: "mediumpurple",
              data:
              [["Who had a hook for a hand?", "Captain Hook"],
              ["Who wanted to marry Belle?","Gaston"],
@@ -36,7 +36,7 @@ var Villains = {backgroundImage: "linear-gradient(190deg, purple, mediumpurple 3
              ["Who lives in Wonderland?","The Queen of Hearts"]]
 };
 
-var Princes = {backgroundImage: "linear-gradient(190deg, blue, powderblue 300px)",
+var Princes = {backgroundColor: "powderblue",
               data:
               [["Who is also known as The Beast?","Adam"],
               ["Who heard Snow White singing?", "Florian"],
@@ -172,5 +172,17 @@ var playGame = function() {
 
   $('#new-game').unbind('click').click(function() {
     playGame();
+  });
+
+  $('h2').click(function() {
+    /*$('#evil-crown').slideDown(200);
+    $('.main-container').css("background-color","blueviolet");
+    $('#title').text(" Villains");
+    $('#princess-hat').slideDown(200);
+    $('.main-container').css("background-color","plum");
+    $('#title').text(" Princesses");*/
+    $('#prince-crown').slideDown(200);
+    $('.main-container').css("background-color","powderblue");
+    $('#title').text(" Princes");
   });
 });
