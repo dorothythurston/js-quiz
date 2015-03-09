@@ -10,11 +10,6 @@
   padding-bottom: 100px;
 }
 
-h2 {
-  padding: none;
-  margin: none;
-}
-
 #jumbotron {
   font-family: 'Dancing Script', cursive;
   padding: 20px 20px 20px 20px;
@@ -41,24 +36,15 @@ h2 {
   font-family: 'Dancing Script', cursive;
 }
 
-.game-option {
-  font-family: 'Dancing Script', cursive;
-  border: 3px solid #696969;
-  height: 75px;
-  margin: 5px;
-  background-color: rgba(255,255,255, .6);
-}
-
 #game {
   display:none;
 }
 
-.answer {
+.game-option, .answer {
   font-family: 'Dancing Script', cursive;
   border: 3px solid #696969;
-  height: 75px;
+  height: 70px;
   margin: 5px;
-  padding: 5px;
   background-color: rgba(255,255,255, .6);
 }
 

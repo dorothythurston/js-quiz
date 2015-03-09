@@ -2,8 +2,8 @@ $(document).ready(function() {
   $('#display').slideDown('slow');
 
 var deck = [];
-var score = 0;
 var i = 0;
+var score = 0;
 var deckLimit = 5;
 var choicesLimit = 3;
 var princesses = {name:"Princesses", decoration:"#princess-hat", backgroundColor: "plum",
@@ -74,7 +74,7 @@ var buildChoices = function(correctAnswer, gameChoice) {
   return choices;
 };
 
-var addQuestion = function(questionPrompt,answer, gameChoice) {
+var addCards = function(questionPrompt,answer, gameChoice) {
   deck.push({
     questionPrompt: questionPrompt,
     answer: answer,
@@ -82,15 +82,18 @@ var addQuestion = function(questionPrompt,answer, gameChoice) {
   });
 };
 
-var buildQuestions = function(gameChoice) {
-  var questions = [];
-  while (questions.length < deckLimit) {
+var selectQuestions = function(gameChoice) {
+  var chosenQuestions = [];
+  while (chosenQuestions.length < deckLimit) {
     var index = ranNum(0, gameChoice.questions.length-1);
-    if (questions.indexOf(gameChoice.questions[index][0]) === -1) {
-    questions.push(gameChoice.questions[index][0]);
+    if (chosenQuestions.indexOf(gameChoice.questions[index]) === -1) {
+    chosenQuestions.push(gameChoice.questions[index]);
+    }
+    else {
+      console.log("already in");
     }
   }
-  return questions
+  return chosenQuestions
 }
 
 var clearDeck = function() {
@@ -100,10 +103,10 @@ var clearDeck = function() {
 };
 
 var buildDeck = function(gameChoice) {
-  var questions = buildQuestions(gameChoice);
+  var chosenQuestions = selectQuestions(gameChoice);
   clearDeck();
   for (var i = 0; i < deckLimit; i++){
-    addQuestion(gameChoice.questions[i][0], gameChoice.questions[i][1], gameChoice);
+    addCards(chosenQuestions[i][0], chosenQuestions[i][1], gameChoice);
   }
 };
 
@@ -121,8 +124,9 @@ var checkAnswer = function(guess) {
 };
 
 var displayResults = function() {
-  $('#game').fadeToggle("fast", "linear", $('#results').show());
-  $('#status').fadeToggle("fast", "linear", $('#new-game').toggle());
+  $('#game').slideUp( 200 );
+  $('#results').slideDown( 200 );
+  $('#status').fadeOut("fast");
   if (score >= 3 ) {
     $('p','#results').text("You got " + score + " correct. You rock.");
   }
@@ -142,12 +146,12 @@ var displayGame = function(gameChoice) {
   $('#index').text(i+1);
 };
 
-
 var playGame = function(gameChoice) {
   i = 0;
   score = 0;
   displayGame(gameChoice);
   buildDeck(gameChoice);
+  console.log(deck);
   fillChoices(gameChoice);
 
   $('.answer').unbind('click').click(function() {
@@ -161,21 +165,38 @@ var playGame = function(gameChoice) {
       $('#index').text(i+1);
     }
   });
+
+  $('#play-again').click(function() {
+    $('#results').slideUp();
+    i = 0;
+    score = 0;
+    $('#game').slideDown( 200 );
+    $('#index').text(i+1);
+    $('#status').slideDown( 200 );
+  });
+
+  $('#play-new-game').click(function() {
+    $(gameChoice.decoration).slideUp(200);
+    $('#results').slideUp();
+    $('#title').text("");
+    $('.game-option').slideDown( 200 );
+    $('.main-container').css('background-color',"steelBlue");
+  });
 };
 
-var selectGame = function(gameChoice) {
-  var choice = $('h2', gameChoice).text();
+var selectGame = function(selectedGame) {
+  var choice = $('h2', selectedGame).text();
   for (var i = 0; i< games.length; i++) {
     if (choice === games[i].name) {
-      playGame(games[i]);
+      return games[i];
     }
     else {
-      console.log('hoo');
+      console.log('error');
     }
   }
 };
 
   $('.game-option').click(function() {
-    selectGame($(this));
+    playGame(selectGame($(this)));
   });
 });
