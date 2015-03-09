@@ -58,11 +58,12 @@ h2 {
   border: 3px solid #696969;
   height: 75px;
   margin: 5px;
+  padding: 5px;
   background-color: rgba(255,255,255, .6);
 }
 
 .answer:hover, .game-option:hover {
-  background-color: rgba(250,250,250, .8);
+  background-color: rgba(250,250,250, .9);
   cursor: pointer;
 }
 
@@ -79,18 +80,6 @@ h2 {
   display: none;
 }
 
-#new-game {
-  margin-top: 10px;
-  margin-left: auto;
-  margin-right: auto;
-  height: 100px;
-  padding: 20px 20px 20px 20px;
-  text-align: center;
-  background-color: rgba(255,255,255, .5);
-  border-radius: 50%;
-  width: 200px;
-}
-
 #results {
   display: none;
   padding: 10px;
@@ -104,6 +93,21 @@ h2 {
   position: relative;
 }
 
+#play-again:hover, #play-new-game:hover {
+  background-color: rgba(255,255,255, .8);
+}
+
+#play-again, #play-new-game {
+  font-family: 'Dancing Script', cursive;
+  background-color: rgba(255,255,255, .5);
+  width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+  padding: 5px;
+  text-align: center;
+  border-radius: 50%;
+}
 
 /* --------------------------
    MICKEY EARS
@@ -342,8 +346,6 @@ h2 {
 /* --------------------------
    KEY
 --------------------------- */
-
-
 #key {
   opacity: 1;
   position: relative;
@@ -389,81 +391,4 @@ h2 {
   height: 5px;
   width: 10px;
   background-color: rgb(227,169,104);
-  }
-
-  /* --------------------------
-     CASTLE
-  --------------------------- */
-  #castle {
-    position: relative;
-    margin-top: 10px;
-    margin-left: auto;
-    margin-right: auto;
-    height: 100px;
-    padding: 20px 20px 20px 20px;
-    text-align: center;
-    background-color: rgba(255,250,250, 1);
-    width: 102px;
-  }
-
-  #castle-base {
-    position: absolute;
-    top: 70px;
-    width: 100px;
-    height: 50px;
-    border-top: 3px dashed rgba(255,250,250, 1);
-    background-color: rgb(40,140,149);
-  }
-
-  #castle-door {
-    position: absolute;
-    top: 90px;
-    left: 60px;
-    width: 20px;
-    height: 30px;
-    background-color: rgba(160,40,149, .7);
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    z-index: 1;
-  }
-
-  #castle-turret-left {
-    position: absolute;
-    top: 60px;
-    width: 20px;
-    height: 20px;
-    background-color: rgb(40,140,149);
-    z-index: 1;
-  }
-
-  #castle-turret-left-roof {
-    position: absolute;
-    top: 30px;
-    left: 15px;
-    width: 0;
-    height: 0;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-bottom: 30px solid magenta;
-  }
-
-  #castle-turret-right {
-    position: absolute;
-    top: 60px;
-    left: 100px;
-    width: 20px;
-    height: 20px;
-    background-color: rgb(40,140,149);
-    z-index: 1;
-  }
-
-  #castle-turret-right-roof {
-    position: absolute;
-    top: 30px;
-    left: 95px;
-    width: 0;
-    height: 0;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-bottom: 30px solid magenta;
   }

@@ -57,8 +57,6 @@ var ranNum = function(min,max) {
   return Math.floor((Math.random() * max) + min);
 }
 
-
-
 var buildChoices = function(correctAnswer, gameChoice) {
   var choices = [];
   choices.push(correctAnswer);
@@ -99,7 +97,6 @@ var clearDeck = function() {
     while(deck.length > 0) {
           deck.pop();
     }
-    console.log(deck);
 };
 
 var buildDeck = function(gameChoice) {
@@ -152,7 +149,18 @@ var playGame = function(gameChoice) {
   displayGame(gameChoice);
   buildDeck(gameChoice);
   fillChoices(gameChoice);
-  console.log(deck);
+
+  $('.answer').unbind('click').click(function() {
+    checkAnswer($(this));
+    if (i === deck.length-1) {
+      displayResults();
+    }
+    else {
+      i++;
+      fillChoices();
+      $('#index').text(i+1);
+    }
+  });
 };
 
 var selectGame = function(gameChoice) {
@@ -166,18 +174,6 @@ var selectGame = function(gameChoice) {
     }
   }
 };
-
-  $('.answer').unbind('click').click(function() {
-    checkAnswer($(this));
-    if (i === deck.length-1) {
-      displayResults();
-    }
-    else {
-      i++;
-      fillChoices();
-      $('#index').text(i+1);
-    }
-  });
 
   $('.game-option').click(function() {
     selectGame($(this));
