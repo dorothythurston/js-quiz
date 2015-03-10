@@ -1,13 +1,89 @@
 $(document).ready(function() {
-  $('#display').slideDown('slow');
+  var ranNum = function(max) {
+    return Math.floor((Math.random() * max) + 0);
+  }
 
-var deck = [];
-var i = 0;
-var score = 0;
-var deckLimit = 5;
-var choicesLimit = 3;
-var princesses = {name:"Princesses", decoration:"#princess-hat", backgroundColor: "plum",
-            questions:
+  function Card(questionFromSet) {
+    this.limit = 3;
+    this.question = questionFromSet[0];
+    this.answer = questionFromSet[1];
+    this.choices = [];
+    this.addChoices = function(gameSet) {
+      this.choices.push(this.answer);
+      while (this.choices.length < this.limit) {
+        var ranIndex = ranNum(gameSet.indexLimit);
+        if ((this.choices.indexOf(gameSet.questions[ranIndex][1]) === -1)) {
+          if (ranIndex % 2 === 0) {
+            this.choices.push(gameSet.questions[ranIndex][1]);
+          }
+          else {
+            this.choices.unshift(gameSet.questions[ranIndex][1]);
+          }
+        }
+      }
+    };
+    this.play = function() {
+      $('#prompt').text(this.question);
+      $(".answer").remove();
+      for (var i = 0; i < 3; i++) {
+        $("#game").append("<div class='answer'><h2>"+ this.choices[i] + "</h2></div>");
+      };
+    };
+  };
+
+  function Set(name, decoration, backgroundColor, questions, indexLimit) {
+    this.name = name;
+    this.decoration = decoration;
+    this.backgroundColor = backgroundColor;
+    this.questions = questions;
+    this.indexLimit = this.questions.length-1;
+  };
+
+  function Game() {
+    this.score = 0;
+    this.statusIndex = 0;
+    this.cardLimit = 5;
+    this.deck = [];
+    this.selectSet = function(selection) {
+      var setName = ($('h2', selection).text());
+      for (var i = 0; i < sets.length; i++) {
+        if (setName === sets[i].name) {
+          this.set = sets[i];
+        }
+      }
+    };
+    this.fillDeck = function() {
+      for (var i = 0; i < this.cardLimit; i++) {
+        var ranIndex = ranNum(this.set.indexLimit);
+        if (this.deck.indexOf(this.set.questions[ranIndex]) === -1) {
+          var newCard = new Card((this.set.questions[ranIndex]));
+          newCard.addChoices(this.set);
+          this.deck.push(newCard);
+        }
+        else {
+          console.log('already in');
+        }
+      };
+    };
+    this.display = function() {
+      $('.game-option').slideUp( 200 );
+      $('.main-container').css("background-color", this.set.backgroundColor);
+      $(this.set.decoration).slideDown(200);
+      $('#status').slideDown( 200 );
+      $('#game').slideDown( 200 );
+      $('#title').text(" " + this.set.name);
+      $('#total').text(this.cardLimit);
+      this.deck[this.statusIndex].play();
+      $('#index').text(this.statusIndex+1);
+    }
+    this.checkAnswer = function(guess) {
+      if (guess.text().trim() === game.deck[game.statusIndex].answer) {
+        game.score++;
+      }
+    }
+  };
+
+  var princesses = new Set("Princesses", "#princess-hat", "plum",
             [["Who wore glass slippers?", "Cinderella"],
             ["Who lived in the Ocean?","Ariel"],
             ["Who was from New Orleans?", "Tiana"],
@@ -19,10 +95,9 @@ var princesses = {name:"Princesses", decoration:"#princess-hat", backgroundColor
             ["Who had a chameleon?","Rapunzel"],
             ["Who was called Sleeping Beauty?", "Aurora"],
             ["Who loved John Smith?","Pochahontas"]]
-};
+  );
 
-var villains = {name: "Villains", decoration:"#evil-crown", backgroundColor: "mediumpurple",
-             questions:
+  var villains = new Set("Villains","#evil-crown","mediumpurple",
              [["Who had a hook for a hand?", "Captain Hook"],
              ["Who wanted to marry Belle?","Gaston"],
              ["Who is a Lion?","Scar"],
@@ -34,10 +109,9 @@ var villains = {name: "Villains", decoration:"#evil-crown", backgroundColor: "me
              ["Who is a greek god?","Hades"],
              ["Who is known as the shadow man?","Doctor Facilier"],
              ["Who lives in Wonderland?","The Queen of Hearts"]]
-};
+  );
 
-var princes = {name: "Princes", decoration:"#prince-crown", backgroundColor: "powderblue",
-              questions:
+  var princes = new Set("Princes","#prince-crown","powderblue",
               [["Who is also known as The Beast?","Adam"],
               ["Who heard Snow White singing?", "Florian"],
               ["Who danced with Cinderella?","Henry"],
@@ -49,154 +123,66 @@ var princes = {name: "Princes", decoration:"#prince-crown", backgroundColor: "po
               ["Who was from Maldonia?","Naveen"],
               ["Whose real name is Eugene?","Flynn Rider"],
               ["Who is from Africa?","Simba"]]
+  );
 
-};
-var games = [princesses, villains, princes];
+  var sets = [princesses, villains, princes];
 
-var ranNum = function(min,max) {
-  return Math.floor((Math.random() * max) + min);
-}
 
-var buildChoices = function(correctAnswer, gameChoice) {
-  var choices = [];
-  choices.push(correctAnswer);
-  while (choices.length < choicesLimit) {
-    var index = ranNum(0, gameChoice.questions.length-1);
-    if ((choices.indexOf(gameChoice.questions[index][1]) === -1)) {
-      if (index % 2 === 0) {
-        choices.push(gameChoice.questions[index][1]);
-      }
-      else {
-        choices.unshift(gameChoice.questions[index][1]);
-      }
-    }
-  }
-  return choices;
-};
-
-var addCards = function(questionPrompt,answer, gameChoice) {
-  deck.push({
-    questionPrompt: questionPrompt,
-    answer: answer,
-    choices: buildChoices(answer, gameChoice)
-  });
-};
-
-var selectQuestions = function(gameChoice) {
-  var chosenQuestions = [];
-  while (chosenQuestions.length < deckLimit) {
-    var index = ranNum(0, gameChoice.questions.length-1);
-    if (chosenQuestions.indexOf(gameChoice.questions[index]) === -1) {
-    chosenQuestions.push(gameChoice.questions[index]);
-    }
-    else {
-      console.log("already in");
-    }
-  }
-  return chosenQuestions
-}
-
-var clearDeck = function() {
-    while(deck.length > 0) {
-          deck.pop();
-    }
-};
-
-var buildDeck = function(gameChoice) {
-  var chosenQuestions = selectQuestions(gameChoice);
-  clearDeck();
-  for (var i = 0; i < deckLimit; i++){
-    addCards(chosenQuestions[i][0], chosenQuestions[i][1], gameChoice);
-  }
-};
-
-var fillChoices = function() {
-  $('p', '#prompt').text(deck[i].questionPrompt);
-  $('#choice-one').text(deck[i].choices[0]);
-  $('#choice-two').text(deck[i].choices[1]);
-  $('#choice-three').text(deck[i].choices[2]);
-};
-
-var checkAnswer = function(guess) {
-  if (guess.text().trim() === deck[i].answer) {
-    score++;
-  }
-};
-
-var displayResults = function() {
+  var displayResults = function() {
   $('#game').slideUp( 200 );
   $('#results').slideDown( 200 );
   $('#status').fadeOut("fast");
-  if (score >= 3 ) {
-    $('p','#results').text("You got " + score + " correct. You rock.");
+  if (game.score >= 3 ) {
+    $('p','#results').text("You got " + game.score + " correct. You rock.");
   }
   else {
-    $('p','#results').text("You got " + score + " correct. Maybe not so much.");
+    $('p','#results').text("You got " + game.score + " correct. Maybe not so much.");
   }
-};
+  };
 
-var displayGame = function(gameChoice) {
-  $('.game-option').slideUp( 200 );
-  $('.main-container').css("background-color", gameChoice.backgroundColor);
-  $(gameChoice.decoration).slideDown(200);
-  $('#status').slideDown( 200 );
-  $('#game').slideDown( 200 );
-  $('#title').text(" " + gameChoice.name);
-  $('#total').text(deckLimit);
-  $('#index').text(i+1);
-};
+  var fillGameOptions = function(sets){
+  for (var i = 0; i < sets.length; i++) {
+    $('.main-menu').append("<div class='game-option'><h2>"+ sets[i].name + "</h2></div>");
+  }
+  };
 
-var playGame = function(gameChoice) {
-  i = 0;
-  score = 0;
-  displayGame(gameChoice);
-  buildDeck(gameChoice);
-  console.log(deck);
-  fillChoices(gameChoice);
+  fillGameOptions(sets);
+  $('#display').slideDown('slow');
+  var game = undefined;
 
-  $('.answer').unbind('click').click(function() {
-    checkAnswer($(this));
-    if (i === deck.length-1) {
-      displayResults();
+  $('.game-option').click(function() {
+  game = new Game();
+  game.selectSet($(this));
+  game.fillDeck();
+  game.display();
+  });
+
+  $("#game").on('click','.answer', function() {
+    if (game.statusIndex < game.cardLimit-1) {
+      game.checkAnswer($('h2', this));
+      game.statusIndex++;
+      game.deck[game.statusIndex].play();
+      $('#index').text(game.statusIndex+1);
     }
     else {
-      i++;
-      fillChoices();
-      $('#index').text(i+1);
+      displayResults();
     }
   });
 
   $('#play-again').click(function() {
     $('#results').slideUp();
-    i = 0;
-    score = 0;
+    game.statusIndex = 0;
+    game.score = 0;
     $('#game').slideDown( 200 );
-    $('#index').text(i+1);
+    $('#index').text(game.statusIndex+1);
     $('#status').slideDown( 200 );
   });
 
   $('#play-new-game').click(function() {
-    $(gameChoice.decoration).slideUp(200);
+    $(game.set.decoration).slideUp(200);
     $('#results').slideUp();
     $('#title').text("");
     $('.game-option').slideDown( 200 );
     $('.main-container').css('background-color',"steelBlue");
-  });
-};
-
-var selectGame = function(selectedGame) {
-  var choice = $('h2', selectedGame).text();
-  for (var i = 0; i< games.length; i++) {
-    if (choice === games[i].name) {
-      return games[i];
-    }
-    else {
-      console.log('error');
-    }
-  }
-};
-
-  $('.game-option').click(function() {
-    playGame(selectGame($(this)));
   });
 });
