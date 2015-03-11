@@ -3,31 +3,41 @@ $(document).ready(function() {
     return Math.floor((Math.random() * max) + 0);
   }
 
-  function Card(questionFromSet) {
+  function Card(set, deck) {
+    this.set = set;
+    this.deck = deck
     this.limit = 3;
-    this.question = questionFromSet[0];
-    this.answer = questionFromSet[1];
+    this.question;
+    this.answer;
     this.choices = [];
-    this.addChoices = function(gameSet) {
-      this.choices.push(this.answer);
-      while (this.choices.length < this.limit) {
-        var ranIndex = ranNum(gameSet.indexLimit);
-        if ((this.choices.indexOf(gameSet.questions[ranIndex][1]) === -1)) {
-          if (ranIndex % 2 === 0) {
-            this.choices.push(gameSet.questions[ranIndex][1]);
-          }
-          else {
-            this.choices.unshift(gameSet.questions[ranIndex][1]);
-          }
-        }
+  };
+
+  Card.prototype.addPromptAndAnswer = function() {
+      var ranIndex = ranNum(this.set.indexLimit);
+      var setQuestions = this.set.questions;
+      if (this.deck.indexOf(setQuestions[ranIndex]) === -1) {
+          console.log(setQuestions[ranIndex]);
+          console.log(this.deck);
+          this.question = setQuestions[ranIndex][0];
+          this.answer = setQuestions[ranIndex][1];
       }
     };
-    this.play = function() {
-      $('#prompt').text(this.question);
-      $(".answer").remove();
-      for (var i = 0; i < 3; i++) {
-        $("#game").append("<div class='answer'><h2>"+ this.choices[i] + "</h2></div>");
-      };
+
+  Card.prototype.addChoices = function() {
+    this.choices.push(this.answer);
+    while (this.choices.length < this.limit) {
+      var ranQuestion = this.set.questions[ranNum(this.set.indexLimit)][1];
+      if ((this.choices.indexOf(ranQuestion) === -1)) {
+        (ranNum(2) % 2 === 0) ? this.choices.push(ranQuestion) : this.choices.unshift(ranQuestion);
+      }
+    }
+  };
+
+  Card.prototype.play = function() {
+    $('#prompt').text(this.question);
+    $(".answer").remove();
+    for (var i = 0; i < 3; i++) {
+      $("#game").append("<div class='answer'><h2>"+ this.choices[i] + "</h2></div>");
     };
   };
 
@@ -44,42 +54,40 @@ $(document).ready(function() {
     this.statusIndex = 0;
     this.cardLimit = 5;
     this.deck = [];
-    this.selectSet = function(selection) {
-      var setName = ($('h2', selection).text());
-      for (var i = 0; i < sets.length; i++) {
-        if (setName === sets[i].name) {
-          this.set = sets[i];
-        }
+  };
+
+  Game.prototype.selectSet = function(selection) {
+    var setName = ($('h2', selection).text());
+    for (var i = 0; i < sets.length; i++) {
+      if (setName === sets[i].name) {
+        this.set = sets[i];
       }
-    };
-    this.fillDeck = function() {
-      for (var i = 0; i < this.cardLimit; i++) {
-        var ranIndex = ranNum(this.set.indexLimit);
-        if (this.deck.indexOf(this.set.questions[ranIndex]) === -1) {
-          var newCard = new Card((this.set.questions[ranIndex]));
-          newCard.addChoices(this.set);
-          this.deck.push(newCard);
-        }
-        else {
-          console.log('already in');
-        }
-      };
-    };
-    this.display = function() {
-      $('.game-option').slideUp( 200 );
-      $('.main-container').css("background-color", this.set.backgroundColor);
-      $(this.set.decoration).slideDown(200);
-      $('#status').slideDown( 200 );
-      $('#game').slideDown( 200 );
-      $('#title').text(" " + this.set.name);
-      $('#total').text(this.cardLimit);
-      this.deck[this.statusIndex].play();
-      $('#index').text(this.statusIndex+1);
     }
-    this.checkAnswer = function(guess) {
-      if (guess.text().trim() === game.deck[game.statusIndex].answer) {
-        game.score++;
-      }
+  };
+  Game.prototype.fillDeck = function() {
+    for (var i = 0; i < this.cardLimit; i++) {
+      var newCard = new Card(this.set, this.deck);
+      newCard.addPromptAndAnswer();
+      newCard.addChoices();
+      this.deck.push(newCard);
+    };
+  };
+  
+  Game.prototype.display = function() {
+    $('.game-option').slideUp( 200 );
+    $('.main-container').css("background-color", this.set.backgroundColor);
+    $(this.set.decoration).slideDown(200);
+    $('#status').slideDown( 200 );
+    $('#game').slideDown( 200 );
+    $('#title').text(" " + this.set.name);
+    $('#total').text(this.cardLimit);
+    this.deck[this.statusIndex].play();
+    $('#index').text(this.statusIndex+1);
+  };
+
+  Game.prototype.checkAnswer = function(guess) {
+    if (guess.text().trim() === game.deck[game.statusIndex].answer) {
+      game.score++;
     }
   };
 
@@ -129,37 +137,32 @@ $(document).ready(function() {
 
 
   var displayResults = function() {
-  $('#game').slideUp( 200 );
-  $('#results').slideDown( 200 );
-  $('#status').fadeOut("fast");
-  if (game.score >= 3 ) {
-    $('p','#results').text("You got " + game.score + " correct. You rock.");
-  }
-  else {
-    $('p','#results').text("You got " + game.score + " correct. Maybe not so much.");
-  }
+    $('#game').slideUp( 200 );
+    $('#results').slideDown( 200 );
+    $('#status').fadeOut("fast");
+      (game.score >= 3 ) ? $('p','#results').text("You got " + game.score + " correct. You rock.") : $('p','#results').text("You got " + game.score + " correct. Maybe not so much.");
   };
 
   var fillGameOptions = function(sets){
-  for (var i = 0; i < sets.length; i++) {
-    $('.main-menu').append("<div class='game-option'><h2>"+ sets[i].name + "</h2></div>");
-  }
+    for (var i = 0; i < sets.length; i++) {
+      $('.main-menu').append("<div class='game-option'><h2>"+ sets[i].name + "</h2></div>");
+    }
   };
 
   fillGameOptions(sets);
   $('#display').slideDown('slow');
-  var game = undefined;
+  var game;
 
   $('.game-option').click(function() {
-  game = new Game();
-  game.selectSet($(this));
-  game.fillDeck();
-  game.display();
+    game = new Game();
+    game.selectSet($(this));
+    game.fillDeck();
+    game.display();
   });
 
   $("#game").on('click','.answer', function() {
+    game.checkAnswer($('h2', this));
     if (game.statusIndex < game.cardLimit-1) {
-      game.checkAnswer($('h2', this));
       game.statusIndex++;
       game.deck[game.statusIndex].play();
       $('#index').text(game.statusIndex+1);
