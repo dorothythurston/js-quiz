@@ -12,33 +12,31 @@ $(document).ready(function() {
     this.choices = [];
   };
 
-  Card.prototype.addPromptAndAnswer = function() {
+  Card.prototype = {
+    addPromptAndAnswer: function() {
       var ranIndex = ranNum(this.set.indexLimit);
       var setQuestions = this.set.questions;
       if (this.deck.indexOf(setQuestions[ranIndex]) === -1) {
-          console.log(setQuestions[ranIndex]);
-          console.log(this.deck);
-          this.question = setQuestions[ranIndex][0];
-          this.answer = setQuestions[ranIndex][1];
+         this.question = setQuestions[ranIndex][0];
+         this.answer = setQuestions[ranIndex][1];
       }
-    };
-
-  Card.prototype.addChoices = function() {
-    this.choices.push(this.answer);
-    while (this.choices.length < this.limit) {
-      var ranQuestion = this.set.questions[ranNum(this.set.indexLimit)][1];
-      if ((this.choices.indexOf(ranQuestion) === -1)) {
-        (ranNum(2) % 2 === 0) ? this.choices.push(ranQuestion) : this.choices.unshift(ranQuestion);
+    },
+    addChoices: function() {
+      this.choices.push(this.answer);
+      while (this.choices.length < this.limit) {
+        var ranQuestion = this.set.questions[ranNum(this.set.indexLimit)][1];
+        if ((this.choices.indexOf(ranQuestion) === -1)) {
+          (ranNum(2) % 2 === 0) ? this.choices.push(ranQuestion) : this.choices.unshift(ranQuestion);
+        }
       }
+    },
+    play: function() {
+      $('#prompt').text(this.question);
+      $(".answer").remove();
+        for (var i = 0; i < 3; i++) {
+          $("#game").append("<div class='answer'><h2>"+ this.choices[i] + "</h2></div>");
+        }
     }
-  };
-
-  Card.prototype.play = function() {
-    $('#prompt').text(this.question);
-    $(".answer").remove();
-    for (var i = 0; i < 3; i++) {
-      $("#game").append("<div class='answer'><h2>"+ this.choices[i] + "</h2></div>");
-    };
   };
 
   function Set(name, decoration, backgroundColor, questions, indexLimit) {
@@ -56,38 +54,44 @@ $(document).ready(function() {
     this.deck = [];
   };
 
-  Game.prototype.selectSet = function(selection) {
-    var setName = ($('h2', selection).text());
-    for (var i = 0; i < sets.length; i++) {
-      if (setName === sets[i].name) {
-        this.set = sets[i];
+  Game.prototype = {
+    selectSet: function(selection) {
+      var setName = ($('h2', selection).text());
+      for (var i = 0; i < sets.length; i++) {
+        if (setName === sets[i].name) {
+          this.set = sets[i];
+        }
       }
-    }
-  };
-  Game.prototype.fillDeck = function() {
-    for (var i = 0; i < this.cardLimit; i++) {
-      var newCard = new Card(this.set, this.deck);
-      newCard.addPromptAndAnswer();
-      newCard.addChoices();
-      this.deck.push(newCard);
-    };
-  };
-  
-  Game.prototype.display = function() {
-    $('.game-option').slideUp( 200 );
-    $('.main-container').css("background-color", this.set.backgroundColor);
-    $(this.set.decoration).slideDown(200);
-    $('#status').slideDown( 200 );
-    $('#game').slideDown( 200 );
-    $('#title').text(" " + this.set.name);
-    $('#total').text(this.cardLimit);
-    this.deck[this.statusIndex].play();
-    $('#index').text(this.statusIndex+1);
-  };
-
-  Game.prototype.checkAnswer = function(guess) {
-    if (guess.text().trim() === game.deck[game.statusIndex].answer) {
-      game.score++;
+    },
+    fillDeck: function() {
+      for (var i = 0; i < this.cardLimit; i++) {
+        var newCard = new Card(this.set, this.deck);
+        newCard.addPromptAndAnswer();
+        newCard.addChoices();
+        this.deck.push(newCard);
+      };
+    },
+    display: function() {
+      $('.game-option').slideUp( 200 );
+      $('.main-container').css("background-color", this.set.backgroundColor);
+      $(this.set.decoration).slideDown(200);
+      $('#status').slideDown( 200 );
+      $('#game').slideDown( 200 );
+      $('#title').text(" " + this.set.name);
+      $('#total').text(this.cardLimit);
+      this.deck[this.statusIndex].play();
+      $('#index').text(this.statusIndex+1);
+    },
+    checkAnswer: function(guess) {
+      if (guess.text().trim() === game.deck[game.statusIndex].answer) {
+        game.score++;
+      }
+    },
+    displayResults: function() {
+      $('#game').slideUp( 200 );
+      $('#results').slideDown( 200 );
+      $('#status').fadeOut("fast");
+        (this.score >= 3 ) ? $('p','#results').text("You got " + this.score + " correct. You rock.") : $('p','#results').text("You got " + this.score + " correct. Maybe not so much.");
     }
   };
 
@@ -135,14 +139,6 @@ $(document).ready(function() {
 
   var sets = [princesses, villains, princes];
 
-
-  var displayResults = function() {
-    $('#game').slideUp( 200 );
-    $('#results').slideDown( 200 );
-    $('#status').fadeOut("fast");
-      (game.score >= 3 ) ? $('p','#results').text("You got " + game.score + " correct. You rock.") : $('p','#results').text("You got " + game.score + " correct. Maybe not so much.");
-  };
-
   var fillGameOptions = function(sets){
     for (var i = 0; i < sets.length; i++) {
       $('.main-menu').append("<div class='game-option'><h2>"+ sets[i].name + "</h2></div>");
@@ -168,7 +164,7 @@ $(document).ready(function() {
       $('#index').text(game.statusIndex+1);
     }
     else {
-      displayResults();
+      game.displayResults();
     }
   });
 
